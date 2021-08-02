@@ -2,14 +2,37 @@ import axios from "axios"
 import { useState } from "react"
 import styled from "styled-components"
 
-export default function Form({teachersList, subjectList, setSubject}){
-    const [teacher, setTeacher] = useState("")
+export default function Form({
+    teachersList, 
+    subjectList, 
+    subject, 
+    setSubject, 
+    teacher, 
+    setTeacher, 
+    category, 
+    setCategory
+}){
     const [name, setName] = useState("")
     const [link, setLink] = useState("")
-
+    console.log(category)
+    console.log(teacher)
 
     const sendNewExam = () => {
-        axios.post("http://localhost:4000/createExam").then().catch()
+        const body = {
+            name,
+            link,
+            category_id: +category,
+            teacher_id: +teacher,
+            subject_id: +subject 
+        }
+        axios.post("http://localhost:4000/createExam", body)
+        .then(() => {
+            alert("Prova enviada com sucesso")
+        })
+        .catch((e) => {
+            console.log(e)
+            alert("Ocorreu um erro, tente novamente")
+        })
     }
     return(
         <FormContainer onSubmit={sendNewExam}>
@@ -23,18 +46,19 @@ export default function Form({teachersList, subjectList, setSubject}){
             </div>
             <div>
                 <label for="link">Categoria:</label>
-                <select id="categories-list">
-                    <option value="P1">P1</option>
-                    <option value="P2">P2</option>
-                    <option value="P3">P3</option>
-                    <option value="2CH">2CH</option>
+                <select id="categories-list" onChange={(e) => setCategory(e.target.value)}>
+                    <option value="1">P1</option>
+                    <option value="2">P2</option>
+                    <option value="3">P3</option>
+                    <option value="4">2CH</option>
+                    <option value="5">Outras</option>
                 </select>
             </div>
             <div>
                 <label for="subjects">Disciplina:</label>
-                <select id="subjects" onChange={(e) => setSubject(e.target.value)}>
+                <select id="subjects" onChange={(e) => setSubject(this)}>
                     {subjectList.map(item => (
-                        <option key={item.id} value={item.name}>{item.name}</option>
+                        <option key={item.id} value={item.id}>{item.name}</option>
                     ))}
                 </select>
             </div>
@@ -42,7 +66,7 @@ export default function Form({teachersList, subjectList, setSubject}){
                 <label for="teachers">Professores:</label>
                 <select id="teachers" onChange={(e) => setTeacher(e.target.value)}>
                     {teachersList.map(item => (
-                        <option key={item.id} value={item.name}>{item.name}</option>
+                        <option key={item.id} value={item.id}>{item.name}</option>
                     ))}
                 </select>
             </div>

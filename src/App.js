@@ -5,11 +5,13 @@ import Form from "./components/Form"
 import GlobalStyle from "./styles/GlobalStyles"
 
 export default function App(){
-    const [subject, setSubject] = useState("")
+    const [subject, setSubject] = useState(null)
+    const [teacher, setTeacher] = useState(null)
+    const [category, setCategory] = useState(null)
     const [subjectList, setSubjectList] = useState([])
     const [teachersList, setTeachersList] = useState([])
     const [formIsOpen, setFormIsOpen] = useState(false)
-
+    
     useEffect(() => {
         getSubjects()
     }, [])
@@ -17,10 +19,8 @@ export default function App(){
     useEffect(() => {
         axios.get("http://localhost:4000/teachers").
         then((res) => {
-            if(subject.length > 0){
-                const subjectWithTeachers = res.data.find(i => i.name === subject)
-                setTeachersList(subjectWithTeachers.teachers)
-            }
+            const subjectWithTeachers = res.data.find(i => i.id === +subject)
+            setTeachersList(subjectWithTeachers.teachers)
         })
         .catch((e) => {
             console.log(e)
@@ -52,7 +52,16 @@ export default function App(){
                     <Button onClick={toggleForm}> + enviar prova</Button>
                 </ButtonContainer>
                 {formIsOpen 
-                    && <Form subjectList={subjectList} teachersList={teachersList} setSubject={setSubject}/>}
+                    && <Form 
+                    subjectList={subjectList} 
+                    teachersList={teachersList} 
+                    subject={subject} 
+                    setSubject={setSubject}
+                    teacher={teacher}
+                    setTeacher={setTeacher}
+                    category={category}
+                    setCategory={setCategory}
+                    />}
             </Container>
         </>
     )
